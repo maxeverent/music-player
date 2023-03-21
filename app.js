@@ -19,16 +19,7 @@ app.use('/music/file/:id', async (req, res) => {
     try {
         const {id} = req.params
         const track = await db.select("*").from("music").where("id", "=", id)
-        //res.sendFile(__dirname + track[0].path)
-        const filePath = __dirname + track[0].path
-        const stat = fs.statSync(filePath);
-        res.writeHead(200, {
-            'Content-Type': 'audio/mpeg',
-            'Content-Length': stat.size
-        });
-
-        const stream = fs.createReadStream(filePath);
-        stream.pipe(res);
+        res.sendFile(__dirname + track[0].path)
     }
     catch(e) {
         console.log(e)
