@@ -5,16 +5,9 @@ class playlistController {
         try {
             const {playlist_id} = req.params
             const playlist = await db.select("track_id").from("playlist").where("playlist_id", "=", playlist_id)
-            const tracks = await db.select("*").from("music")
-            console.log(playlist)
-            console.log(tracks)
             const response = []
             for(let i = 0; i < playlist.length; i++) {
-                for(let j = 0; j < tracks.length; j++) {
-                    if (playlist[i].track_id == tracks[j].id) {
-                        response.push(tracks[j])
-                    }
-                }
+                response.push(playlist[i].track_id)
             }
             return res.status(200).json(response)
         }
