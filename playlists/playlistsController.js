@@ -16,8 +16,27 @@ class playlistsController {
         try {
             const name = req.body
             console.log(name)
+            const playlist = await db.select("*").from("playlists")
+            console.log(playlist)
+            for (let i = 0; i < playlist.length; i++) {
+                if (playlist[i].name == name.name) {
+                    return res.status(400).json({message: "Такого плейлист уже существует"})
+                }
+            }
             await db("playlists").insert(name)
-            return res.status(200).json(name)
+            return res.status(200).json(name.name)
+        }
+        catch(e) {
+            console.log(e)
+        }
+    }
+
+    async delete(req, res) {
+        try {
+            const id = req.body
+            //const playlist = await db.select("*").from("playlists")
+            await db("playlists").where("id", id.id).del()
+            return res.status(200).json({message: "Плейлист удален"})
         }
         catch(e) {
             console.log(e)

@@ -19,7 +19,41 @@ app.use('/music/file/:id', async (req, res) => {
     try {
         const {id} = req.params
         const track = await db.select("*").from("music").where("id", "=", id)
-        res.sendFile(__dirname + track[0].path)
+        //res.sendFile(__dirname + track[0].path)
+        const musicPath = __dirname + track[0].path
+        
+
+        const range = req.headers.range; 
+        const stat = fs.statSync(musicPath); 
+
+        let start = 0;
+        let end = stat.size - 1;
+        const CHUNK_SIZE = 10 ** 6; 
+
+        if (range) {
+            const parts = range.replace(/bytes=/, '').split('-');
+            start = parseInt(parts[0], 10);
+            end = parts[1] ? parseInt(parts[1], 10) : stat.size - 1;
+        }
+
+        const contentLength = end - start + 1; 
+
+        const headers = {
+            'Content-Range': `bytes ${start}-${end}/${stat.size}`,
+            'Accept-Ranges': 'bytes',
+            'Content-Length': contentLength,
+            'Content-Type': 'audio/mpeg'
+        };
+
+        res.writeHead(206, headers); 
+
+        const stream = fs.createReadStream(musicPath, { start, end });
+        stream.on('data', (chunk) => {
+            res.write(chunk);
+        });
+        stream.on('end', () => {
+            res.end();
+        });
     }
     catch(e) {
         console.log(e)
