@@ -11,7 +11,13 @@ const musicRouter = require('./music/musicRouter')
 const playlistsRouter = require('./playlists/playlistsRouter')
 const playlistRouter = require('./playlist/playlistRouter')
 
-app.use(cors());
+const corsOptions = {
+    origin: '*',
+    methods: ['POST', 'GET', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}
+app.use(cors(corsOptions));
+
 app.use(bp.json())
 
 app.use('/music', musicRouter)
