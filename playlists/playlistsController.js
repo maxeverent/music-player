@@ -33,9 +33,10 @@ class playlistsController {
 
     async delete(req, res) {
         try {
-            const id = req.body
+            const {id} = req.params
+            console.log(id)
             //const playlist = await db.select("*").from("playlists")
-            await db("playlists").where("id", id.id).del()
+            await db("playlists").where("id", id).del()
             return res.status(200).json({message: "Плейлист удален"})
         }
         catch(e) {
